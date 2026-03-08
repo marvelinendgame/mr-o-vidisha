@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. O's Calculus Class — Vidisha's Tutor</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+:root {
+  --bg: #faf8f5;
+  --chalk: #1a1a2e;
+  --board: #1e3a2f;
+  --board2: #16302a;
+  --board3: #122a24;
+  --chalk-white: #f0ede8;
+  --chalk-yellow: #f5d76e;
+  --chalk-blue: #7ec8e3;
+  --chalk-pink: #f4a4b8;
+  --chalk-green: #7dcfb6;
+  --ink: #2c2c3a;
+  --paper: #fffdf9;
+  --muted: #8a8a9a;
+  --border: #e5e0d8;
+  --warm: #f7f3ed;
+  --mr-o: #c4722a;
+  --mr-o-l: #fef3e8;
+  --accent: #3d6b8f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── LAYOUT ── */
+.app {
+  display: grid;
+  grid-template-columns: 260px 1fr 320px;
+  grid-template-rows: 64px 1fr;
+  height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  grid-column: 1 / -1;
+  background: var(--chalk);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 40px,
+    rgba(255,255,255,.015) 40px,
+    rgba(255,255,255,.015) 41px
+  );
+}
+.mro-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c4722a, #e8a45a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 0 0 3px rgba(196,114,42,.3);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  animation: subtle-glow 3s ease-in-out infinite;
+}
+@keyframes subtle-glow {
+  0%,100% { box-shadow: 0 0 0 3px rgba(196,114,42,.3); }
+  50% { box-shadow: 0 0 0 6px rgba(196,114,42,.15), 0 0 20px rgba(196,114,42,.2); }
+}
+.header-info { position: relative; z-index: 1; }
+.header-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  color: #f0ede8;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.header-sub {
+  font-size: .68rem;
+  color: rgba(240,237,232,.45);
+  font-style: italic;
+  letter-spacing: .5px;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #7dcfb6;
+  display: inline-block;
+  margin-right: 5px;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+.vidisha-tag {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 30px;
+  padding: 6px 14px 6px 8px;
+  position: relative;
+  z-index: 1;
+}
+.vidisha-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7ec8e3, #5aa8c8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+  font-weight: 800;
+  color: white;
+  font-family: 'Fraunces', serif;
+}
+.vidisha-name {
+  font-size: .78rem;
+  color: rgba(240,237,232,.75);
+  font-weight: 600;
+}
+.mode-pills {
+  display: flex;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+  margin-left: 20px;
+}
+.mode-pill {
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: .68rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  color: rgba(240,237,232,.4);
+  background: transparent;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.mode-pill:hover { color: rgba(240,237,232,.7); background: rgba(255,255,255,.06); }
+.mode-pill.active { background: rgba(196,114,42,.25); border-color: rgba(196,114,42,.5); color: #e8a45a; }
+
+/* ── SIDEBAR — TOPICS ── */
+.sidebar {
+  background: var(--paper);
+  border-right: 1.5px solid var(--border);
+  overflow-y: auto;
+  padding: 14px 10px;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+.sidebar-heading {
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.unit-group { margin-bottom: 12px; }
+.unit-label {
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 5px 8px 4px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+.topic-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+  text-align: left;
+  margin-bottom: 1px;
+  font-family: 'Outfit', sans-serif;
+}
+.topic-btn:hover { background: var(--warm); }
+.topic-btn.active {
+  background: var(--mr-o-l);
+  color: var(--mr-o);
+}
+.topic-icon { font-size: .85rem; flex-shrink: 0; }
+.topic-text { flex: 1; line-height: 1.2; }
+.mastery-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--warm);
+  color: var(--muted);
+}
+.topic-btn.active .mastery-pill {
+  background: rgba(196,114,42,.12);
+  color: var(--mr-o);
+}
+.progress-line {
+  height: 2px;
+  border-radius: 1px;
+  margin: 1px 10px 6px 28px;
+  background: var(--border);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width .6s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── CHAT AREA ── */
+.main {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+}
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-behavior: smooth;
+}
+.chat-area::-webkit-scrollbar { width: 4px; }
+.chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Welcome */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
+  padding: 32px 20px;
+}
+.welcome-chalkboard {
+  background: var(--board);
+  border-radius: 16px;
+  padding: 32px 36px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(26,26,46,.12), inset 0 1px 0 rgba(255,255,255,.05);
+  position: relative;
+  margin-bottom: 24px;
+}
+.welcome-chalkboard::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(255,255,255,.08);
+  border-radius: 10px;
+  pointer-events: none;
+}
+.chalk-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.8rem;
+  color: var(--chalk-white);
+  margin-bottom: 6px;
+  font-weight: 900;
+  font-style: italic;
+}
+.chalk-sub {
+  font-size: .78rem;
+  color: rgba(240,237,232,.4);
+  margin-bottom: 20px;
+  font-style: italic;
+  letter-spacing: .5px;
+}
+.chalk-hello {
+  font-size: 1.05rem;
+  color: var(--chalk-yellow);
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+}
+.chalk-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 16px 0 20px;
+  text-align: left;
+}
+.chalk-rule {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: .8rem;
+  color: rgba(240,237,232,.7);
+  line-height: 1.5;
+}
+.chalk-rule-icon { font-size: .85rem; flex-shrink: 0; margin-top: 1px; }
+.start-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #c4722a, #e8a45a);
+  color: white;
+  font-weight: 800;
+  font-size: .92rem;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: .3px;
+  box-shadow: 0 4px 16px rgba(196,114,42,.3);
+}
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(196,114,42,.4); }
+
+/* Messages */
+.msg-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: msgIn .3s ease;
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.msg-avatar-sm {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.msg-avatar-sm.mro { background: linear-gradient(135deg, #c4722a, #e8a45a); color: white; }
+.msg-avatar-sm.vid { background: linear-gradient(135deg, #7ec8e3, #5aa8c8); color: white; font-family: 'Fraunces', serif; }
+.msg-sender {
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.msg-sender.mro { color: var(--mr-o); }
+.msg-sender.vid { color: var(--accent); }
+.msg-bubble {
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: .9rem;
+  line-height: 1.8;
+  max-width: 86%;
+  position: relative;
+}
+.msg-bubble.mro {
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  border-top-left-radius: 4px;
+  margin-left: 36px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.msg-bubble.vid {
+  background: #e8f4fd;
+  border: 1.5px solid #b8d9f0;
+  border-top-right-radius: 4px;
+  margin-left: auto;
+  text-align: left;
+}
+.msg-bubble .question-mark {
+  color: var(--mr-o);
+  font-weight: 800;
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  font-size: .95rem;
+}
+.msg-bubble .hint-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fffaed;
+  border: 1px solid #f5d76e;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: .78rem;
+  margin-top: 8px;
+  color: #7a5c00;
+  font-weight: 600;
+}
+.msg-bubble .bravo {
+  color: #2a7a4a;
+  font-weight: 800;
+  font-size: .95rem;
+}
+.msg-bubble .think-deeper {
+  font-style: italic;
+  color: var(--mr-o);
+  font-weight: 600;
+}
+
+/* Thinking */
+.thinking-wrap {
+  margin-left: 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  border-top-left-radius: 4px;
+  width: fit-content;
+  animation: msgIn .2s ease;
+}
+.thinking-text {
+  font-size: .75rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.thinking-dots { display: flex; gap: 4px; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--mr-o);
+  animation: dotBounce .9s infinite;
+}
+.dot:nth-child(2) { animation-delay: .15s; }
+.dot:nth-child(3) { animation-delay: .3s; }
+@keyframes dotBounce {
+  0%,60%,100%{transform:translateY(0);opacity:.4}
+  30%{transform:translateY(-7px);opacity:1}
+}
+
+/* Input */
+.input-zone {
+  padding: 12px 20px 16px;
+  border-top: 1.5px solid var(--border);
+  background: var(--paper);
+}
+.input-bar {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 8px 8px 14px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input-bar:focus-within {
+  border-color: var(--mr-o);
+  box-shadow: 0 0 0 3px rgba(196,114,42,.1);
+}
+.chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: .9rem;
+  font-family: 'Outfit', sans-serif;
+  resize: none;
+  min-height: 24px;
+  max-height: 100px;
+  line-height: 1.5;
+  outline: none;
+}
+.chat-input::placeholder { color: var(--muted); font-style: italic; }
+.input-actions { display: flex; gap: 6px; align-items: center; }
+.mic-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--warm);
+  font-size: .9rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  color: var(--ink);
+}
+.mic-btn:hover { border-color: var(--mr-o); }
+.mic-btn.listening {
+  background: #fee2e2;
+  border-color: #f87171;
+  animation: micPulse 1.2s infinite;
+}
+@keyframes micPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.4)}
+  50%{box-shadow:0 0 0 8px rgba(248,113,113,0)}
+}
+.send-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: var(--mr-o);
+  color: white;
+  font-size: .95rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  font-weight: 800;
+}
+.send-btn:hover { background: #a85e20; transform: scale(1.05); }
+.send-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+.input-hint {
+  text-align: center;
+  font-size: .68rem;
+  color: var(--muted);
+  margin-top: 7px;
+  font-style: italic;
+}
+.speaking-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  color: var(--mr-o);
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: none;
+}
+.speaking-bar.visible { display: flex; }
+.sound-wave {
+  display: flex; gap: 2px; align-items: center;
+}
+.wave-bar {
+  width: 3px;
+  background: var(--mr-o);
+  border-radius: 2px;
+  animation: wave .8s infinite;
+}
+.wave-bar:nth-child(1){height:6px;animation-delay:0s}
+.wave-bar:nth-child(2){height:12px;animation-delay:.1s}
+.wave-bar:nth-child(3){height:8px;animation-delay:.2s}
+.wave-bar:nth-child(4){height:14px;animation-delay:.05s}
+.wave-bar:nth-child(5){height:6px;animation-delay:.15s}
+@keyframes wave {
+  0%,100%{transform:scaleY(1)}
+  50%{transform:scaleY(.4)}
+}
+
+/* ── CHALKBOARD (whiteboard) ── */
+.chalkboard {
+  background: var(--board);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.chalkboard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(255,255,255,.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255,255,255,.015) 0%, transparent 50%);
+  pointer-events: none;
+}
+.cb-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.cb-title {
+  font-family: 'Fraunces', serif;
+  font-size: .78rem;
+  font-style: italic;
+  color: rgba(240,237,232,.45);
+  letter-spacing: 1px;
+}
+.cb-eraser {
+  margin-left: auto;
+  font-size: .68rem;
+  color: rgba(240,237,232,.3);
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: transparent;
+  transition: all .15s;
+  font-family: 'Outfit', sans-serif;
+}
+.cb-eraser:hover { color: rgba(240,237,232,.6); border-color: rgba(255,255,255,.2); }
+.cb-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+.cb-content::-webkit-scrollbar { width: 3px; }
+.cb-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
+.cb-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+}
+.cb-empty-icon { font-size: 2.5rem; opacity: .15; }
+.cb-empty p {
+  font-size: .75rem;
+  color: rgba(240,237,232,.2);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Chalkboard items */
+.cb-item {
+  border-radius: 8px;
+  padding: 14px;
+  position: relative;
+  animation: cbIn .5s cubic-bezier(.34,1.4,.64,1);
+  overflow: hidden;
+}
+@keyframes cbIn {
+  from { opacity: 0; transform: translateY(6px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cb-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .04;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.cb-item.equation { border-left: 3px solid var(--chalk-yellow); }
+.cb-item.definition { border-left: 3px solid var(--chalk-green); }
+.cb-item.steps { border-left: 3px solid var(--chalk-blue); }
+.cb-item.concept { border-left: 3px solid var(--chalk-pink); }
+.cb-item-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.cb-item.equation .cb-item-label { color: var(--chalk-yellow); }
+.cb-item.definition .cb-item-label { color: var(--chalk-green); }
+.cb-item.steps .cb-item-label { color: var(--chalk-blue); }
+.cb-item.concept .cb-item-label { color: var(--chalk-pink); }
+.cb-equation {
+  color: var(--chalk-white);
+  font-size: 1.05rem;
+  text-align: center;
+  padding: 8px 0 4px;
+  overflow-x: auto;
+  line-height: 2;
+}
+.cb-definition {
+  color: rgba(240,237,232,.82);
+  font-size: .82rem;
+  line-height: 1.8;
+}
+.cb-steps { display: flex; flex-direction: column; gap: 9px; }
+.cb-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: .81rem;
+  color: rgba(240,237,232,.82);
+  line-height: 1.65;
+}
+.cb-step-n {
+  width: 20px; height: 20px;
+  border-radius: 4px;
+  background: rgba(126,200,227,.15);
+  border: 1px solid rgba(126,200,227,.3);
+  color: var(--chalk-blue);
+  font-size: .6rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.cb-concept {
+  color: rgba(240,237,232,.85);
+  font-size: .82rem;
+  line-height: 1.8;
+  font-style: italic;
+}
+.chalk-underline {
+  display: inline-block;
+  border-bottom: 2px solid var(--chalk-pink);
+  padding-bottom: 1px;
+}
+
+/* Score badge in sidebar */
+.mastery-label {
+  font-size: .6rem;
+  color: var(--muted);
+  text-align: right;
+  padding: 0 10px 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@media(max-width:960px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 64px 1fr; }
+  .sidebar, .chalkboard { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="mro-avatar">🎓</div>
+    <div class="header-info">
+      <div class="header-name">Mr. O</div>
+      <div class="header-sub"><span class="status-dot"></span>Socratic Math Tutor · Calculus BC</div>
+    </div>
+    <div class="mode-pills">
+      <button class="mode-pill active" onclick="setMode('teach',this)">📖 Teach</button>
+      <button class="mode-pill" onclick="setMode('practice',this)">✏️ Practice</button>
+      <button class="mode-pill" onclick="setMode('diagnose',this)">🔍 Diagnose</button>
+      <button class="mode-pill" onclick="setMode('drill',this)">⚡ Drill</button>
+    </div>
+    <button onclick="promptForKey('')" title="Set OpenAI voice key" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 12px;color:rgba(240,237,232,.5);font-size:.75rem;cursor:pointer;font-family:'Outfit',sans-serif;z-index:1;position:relative;transition:all .15s;" onmouseover="this.style.color='rgba(240,237,232,.85)';this.style.borderColor='rgba(196,114,42,.5)'" onmouseout="this.style.color='rgba(240,237,232,.5)';this.style.borderColor='rgba(255,255,255,.12)'">🔑 Voice</button>
+<div class="vidisha-tag">
+      <div class="vidisha-avatar">V</div>
+      <div class="vidisha-name">Vidisha</div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">📚 Vidisha's Progress</div>
+
+    <div class="unit-group">
+      <div class="unit-label">Limits & Continuity</div>
+      <button class="topic-btn active" id="topic-limits" onclick="selectTopic('limits',this)">
+        <span class="topic-icon">→</span>
+        <span class="topic-text">Limits</span>
+        <span class="mastery-pill" id="pill-limits">20%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-limits" style="width:20%;background:#7dcfb6"></div></div>
+      <button class="topic-btn" id="topic-continuity" onclick="selectTopic('continuity',this)">
+        <span class="topic-icon">∿</span>
+        <span class="topic-text">Continuity</span>
+        <span class="mastery-pill" id="pill-continuity">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-continuity" style="width:0%;background:#7dcfb6"></div></div>
+      <button class="topic-btn" onclick="selectTopic('lhopital',this)">
+        <span class="topic-icon">∞</span>
+        <span class="topic-text">L'Hôpital's Rule</span>
+        <span class="mastery-pill" id="pill-lhopital">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-lhopital" style="width:0%;background:#f5d76e"></div></div>
+    </div>
+
+    <div class="unit-group">
+      <div class="unit-label">Derivatives</div>
+      <button class="topic-btn" onclick="selectTopic('derivatives',this)">
+        <span class="topic-icon">′</span>
+        <span class="topic-text">Definition</span>
+        <span class="mastery-pill" id="pill-derivatives">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-derivatives" style="width:0%;background:#7ec8e3"></div></div>
+      <button class="topic-btn" onclick="selectTopic('diffrules',this)">
+        <span class="topic-icon">⚡</span>
+        <span class="topic-text">Diff. Rules</span>
+        <span class="mastery-pill" id="pill-diffrules">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-diffrules" style="width:0%;background:#7ec8e3"></div></div>
+      <button class="topic-btn" onclick="selectTopic('chainrule',this)">
+        <span class="topic-icon">⛓</span>
+        <span class="topic-text">Chain Rule</span>
+        <span class="mastery-pill" id="pill-chainrule">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-chainrule" style="width:0%;background:#7ec8e3"></div></div>
+      <button class="topic-btn" onclick="selectTopic('implicit',this)">
+        <span class="topic-icon">x,y</span>
+        <span class="topic-text">Implicit Diff.</span>
+        <span class="mastery-pill" id="pill-implicit">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-implicit" style="width:0%;background:#7ec8e3"></div></div>
+      <button class="topic-btn" onclick="selectTopic('related',this)">
+        <span class="topic-icon">↔</span>
+        <span class="topic-text">Related Rates</span>
+        <span class="mastery-pill" id="pill-related">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-related" style="width:0%;background:#7ec8e3"></div></div>
+    </div>
+
+    <div class="unit-group">
+      <div class="unit-label">Applications</div>
+      <button class="topic-btn" onclick="selectTopic('optimization',this)">
+        <span class="topic-icon">⬆</span>
+        <span class="topic-text">Optimization</span>
+        <span class="mastery-pill" id="pill-optimization">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-optimization" style="width:0%;background:#f4a4b8"></div></div>
+      <button class="topic-btn" onclick="selectTopic('meanvalue',this)">
+        <span class="topic-icon">≈</span>
+        <span class="topic-text">Mean Value Thm</span>
+        <span class="mastery-pill" id="pill-meanvalue">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-meanvalue" style="width:0%;background:#f4a4b8"></div></div>
+    </div>
+
+    <div class="unit-group">
+      <div class="unit-label">Integrals</div>
+      <button class="topic-btn" onclick="selectTopic('antiderivatives',this)">
+        <span class="topic-icon">∫</span>
+        <span class="topic-text">Antiderivatives</span>
+        <span class="mastery-pill" id="pill-antiderivatives">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-antiderivatives" style="width:0%;background:#f5d76e"></div></div>
+      <button class="topic-btn" onclick="selectTopic('riemann',this)">
+        <span class="topic-icon">▭</span>
+        <span class="topic-text">Riemann Sums</span>
+        <span class="mastery-pill" id="pill-riemann">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-riemann" style="width:0%;background:#f5d76e"></div></div>
+      <button class="topic-btn" onclick="selectTopic('ftc',this)">
+        <span class="topic-icon">★</span>
+        <span class="topic-text">Fund. Thm Calc</span>
+        <span class="mastery-pill" id="pill-ftc">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-ftc" style="width:0%;background:#f5d76e"></div></div>
+      <button class="topic-btn" onclick="selectTopic('usub',this)">
+        <span class="topic-icon">u</span>
+        <span class="topic-text">U-Substitution</span>
+        <span class="mastery-pill" id="pill-usub">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-usub" style="width:0%;background:#f5d76e"></div></div>
+      <button class="topic-btn" onclick="selectTopic('parts',this)">
+        <span class="topic-icon">∫∫</span>
+        <span class="topic-text">Integration by Parts</span>
+        <span class="mastery-pill" id="pill-parts">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-parts" style="width:0%;background:#f5d76e"></div></div>
+    </div>
+
+    <div class="unit-group">
+      <div class="unit-label">BC Only</div>
+      <button class="topic-btn" onclick="selectTopic('series',this)">
+        <span class="topic-icon">Σ</span>
+        <span class="topic-text">Infinite Series</span>
+        <span class="mastery-pill" id="pill-series">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-series" style="width:0%;background:#f4a4b8"></div></div>
+      <button class="topic-btn" onclick="selectTopic('taylor',this)">
+        <span class="topic-icon">T</span>
+        <span class="topic-text">Taylor Series</span>
+        <span class="mastery-pill" id="pill-taylor">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-taylor" style="width:0%;background:#f4a4b8"></div></div>
+      <button class="topic-btn" onclick="selectTopic('polar',this)">
+        <span class="topic-icon">θ</span>
+        <span class="topic-text">Polar / Parametric</span>
+        <span class="mastery-pill" id="pill-polar">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-polar" style="width:0%;background:#f4a4b8"></div></div>
+      <button class="topic-btn" onclick="selectTopic('diffeq',this)">
+        <span class="topic-icon">dy/dx</span>
+        <span class="topic-text">Diff. Equations</span>
+        <span class="mastery-pill" id="pill-diffeq">0%</span>
+      </button>
+      <div class="progress-line"><div class="progress-fill" id="bar-diffeq" style="width:0%;background:#f4a4b8"></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="chat-area" id="chatArea">
+
+      <!-- Welcome Screen -->
+      <div class="welcome" id="welcome">
+        <div class="welcome-chalkboard">
+          <div class="chalk-title">Mr. O's Calculus Class</div>
+          <div class="chalk-sub">Calculus BC · Socratic Method</div>
+          <div class="chalk-hello">Good to see you, Vidisha! 👋</div>
+          <p style="color:rgba(240,237,232,.55);font-size:.82rem;margin-bottom:4px;">Here's how our sessions work:</p>
+          <div class="chalk-rules">
+            <div class="chalk-rule"><span class="chalk-rule-icon">🤔</span><span>I won't give you answers — I'll ask you questions until <em>you</em> find them</span></div>
+            <div class="chalk-rule"><span class="chalk-rule-icon">💡</span><span>When you're stuck, I'll give you a small nudge — not the solution</span></div>
+            <div class="chalk-rule"><span class="chalk-rule-icon">📐</span><span>Watch the chalkboard on the right — that's where the math lives</span></div>
+            <div class="chalk-rule"><span class="chalk-rule-icon">🎤</span><span>Hit the mic and talk to me — just like a real class</span></div>
+          </div>
+          <button class="start-btn" onclick="startSession()">Let's Start →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="input-zone">
+      <div class="speaking-bar" id="speakingBar">
+        <div class="sound-wave">
+          <div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+        Mr. O is speaking...
+      </div>
+      <div class="input-bar">
+        <textarea
+          class="chat-input"
+          id="chatInput"
+          placeholder="Answer Mr. O's question, Vidisha..."
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <div class="input-actions">
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Speak your answer">🎤</button>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+        </div>
+      </div>
+      <div class="input-hint" id="hint">Pick a topic on the left to begin · Enter to send</div>
+    </div>
+  </main>
+
+  <!-- CHALKBOARD -->
+  <aside class="chalkboard">
+    <div class="cb-header">
+      <span style="font-size:.9rem;">🖊️</span>
+      <span class="cb-title">Mr. O's Chalkboard</span>
+      <button class="cb-eraser" onclick="eraseBoard()">Erase ✦</button>
+    </div>
+    <div class="cb-content" id="cbContent">
+      <div class="cb-empty" id="cbEmpty">
+        <div class="cb-empty-icon">✍️</div>
+        <p>Mr. O will write<br>equations and concepts<br>here as you work through them</p>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+// ── STATE ──
+let history = [];
+let topic = 'limits';
+let mode = 'teach';
+let mastery = {};
+let sessionStarted = false;
+let isListening = false;
+let recog = null;
+let isSpeaking = false;
+let currentAudio = null;
+let openaiKey = sessionStorage.getItem('oai_key') || '';
+
+const TOPICS = {
+  limits:'Limits', continuity:'Continuity', lhopital:"L'Hôpital's Rule",
+  derivatives:'Definition of Derivatives', diffrules:'Differentiation Rules',
+  chainrule:'Chain Rule', implicit:'Implicit Differentiation',
+  related:'Related Rates', curvesk:'Curve Sketching',
+  optimization:'Optimization', meanvalue:'Mean Value Theorem',
+  antiderivatives:'Antiderivatives', riemann:'Riemann Sums',
+  ftc:'Fundamental Theorem of Calculus', usub:'U-Substitution',
+  parts:'Integration by Parts', series:'Infinite Series',
+  taylor:'Taylor Series', polar:'Polar & Parametric', diffeq:'Differential Equations'
+};
+
+const OPENERS = {
+  limits: "Before I write a single thing on the board — Vidisha, tell me: when a function gets closer and closer to a value but never quite reaches it, what do you *think* is happening?",
+  derivatives: "Vidisha, imagine you're in a car and someone asks: 'how fast are you going at exactly this instant?' How would you even begin to answer that?",
+  chainrule: "Look at h(x) = sin(x²) for a second. How many functions do you see hiding inside that one expression?",
+  ftc: "Here's a big question, Vidisha. Derivatives measure *rates of change*. Integrals measure *accumulated area*. Why do you think those two ideas might be secretly connected?",
+  series: "If I kept adding numbers forever — like 1 + 1/2 + 1/4 + 1/8 + ... — do you think the sum would explode to infinity? Or could it land on a finite number?",
+  taylor: "What if every smooth function was secretly a polynomial in disguise? What would that mean for how we do calculations?",
+  usub: "When you see ∫ 2x cos(x²) dx, what structure do you notice? Don't solve it yet — just look at it.",
+  riemann: "If I asked you to find the area under a curve using only rectangles, how would you approach that?",
+  optimization: "Vidisha, what mathematical condition *must* be true at the highest or lowest point of any smooth curve?",
+  implicit: "x² + y² = 25 — try solving that for y. Now here's my question: what if we couldn't solve for y easily? Would there be another way to differentiate?",
+  diffeq: "A differential equation describes a *relationship between a function and its own rate of change*. Can you think of any real-world situation that fits that description?",
+  parts: "You know the product rule: d/dx[uv] = u'v + uv'. What happens if you integrate both sides of that equation?",
+  polar: "In regular coordinates we describe points as (x, y). What if instead we described a point by its distance from the origin and the angle it makes? What would change?"
+};
+
+const SYS = `You are Mr. O — a brilliant, warm, and slightly theatrical Socratic math teacher tutoring a student named Vidisha in Calculus BC.
+
+PERSONALITY: You speak directly to Vidisha by name (but not in every message — just naturally). You're encouraging, a little playful, deeply patient. You celebrate her progress genuinely. You have the energy of a great teacher who loves math.
+
+CORE RULE — NEVER BREAK THIS:
+You NEVER give Vidisha the answer directly. You ask questions that lead her to discover it herself. Every response ends with either a question for Vidisha, a small hint, or a prompt to think deeper.
+
+WHEN SHE'S RIGHT: Celebrate briefly, then deepen — "Exactly! And now that you see that — what does it mean for...?"
+WHEN SHE'S WRONG: Don't say "wrong." Find what's partially right, correct the specific misconception with a question, not a statement.
+WHEN SHE'S STUCK: Give the smallest possible hint — one step, not the solution.
+
+RESPONSE FORMAT — return ONLY valid JSON, no markdown:
+{
+  "message": "Your warm Socratic response to Vidisha — natural, personal, ends with a question or prompt. Under 130 words. Plain text — no LaTeX in message, speak math in words.",
+  "speak": "Short version of the message for text-to-speech (under 60 words, no LaTeX at all, just natural spoken English)",
+  "whiteboard": [
+    {
+      "type": "equation|definition|steps|concept",
+      "label": "short label like 'Limit Definition' or 'Key Insight'",
+      "content": "for equation: LaTeX string. for steps: array of strings. for others: plain text"
+    }
+  ],
+  "mastery_delta": number from -5 to 15,
+  "expects_response": true or false
+}
+
+Current topic: TOPIC
+Current mode: MODE
+Student name: Vidisha`;
+
+// ── FUNCTIONS ──
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function selectTopic(t, btn) {
+  topic = t;
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (sessionStarted) {
+    addMrO(`Alright Vidisha, let's shift to <strong>${TOPICS[t]}</strong>. ${OPENERS[t] || 'What do you already know about this one?'}`);
+    addBoard('concept', 'Current Topic', TOPICS[t] + ' — Calculus BC', 'concept');
+  }
+}
+
+function startSession() {
+  sessionStarted = true;
+  document.getElementById('welcome').style.display = 'none';
+  const msg = `Welcome back, Vidisha! Ready to think hard today? We're starting with <strong>${TOPICS[topic]}</strong>. ${OPENERS[topic] || 'What comes to mind when you hear this topic?'}`;
+  addMrO(msg);
+  addBoard('concept', 'Today\'s Topic', TOPICS[topic] + ' — Calculus BC', 'concept');
+  speakOut(`Welcome back, Vidisha! Ready to think hard? ${OPENERS[topic] || ''}`);
+}
+
+function addMrO(content) {
+  const area = document.getElementById('chatArea');
+  document.getElementById('welcome').style.display = 'none';
+  const div = document.createElement('div');
+  div.className = 'msg-group';
+  div.innerHTML = `
+    <div class="msg-header">
+      <div class="msg-avatar-sm mro">🎓</div>
+      <div class="msg-sender mro">MR. O</div>
+    </div>
+    <div class="msg-bubble mro">${content}</div>
+  `;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function addVidisha(content) {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'msg-group';
+  div.style.alignItems = 'flex-end';
+  div.innerHTML = `
+    <div class="msg-header" style="justify-content:flex-end">
+      <div class="msg-sender vid">VIDISHA</div>
+      <div class="msg-avatar-sm vid">V</div>
+    </div>
+    <div class="msg-bubble vid">${esc(content)}</div>
+  `;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showThinking() {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.id = 'thinking';
+  div.innerHTML = `
+    <div class="msg-header" style="margin-bottom:4px;">
+      <div class="msg-avatar-sm mro">🎓</div>
+      <div class="msg-sender mro">MR. O</div>
+    </div>
+    <div class="thinking-wrap">
+      <span class="thinking-text">Mr. O is thinking...</span>
+      <div class="thinking-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+  `;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function hideThinking() {
+  const t = document.getElementById('thinking');
+  if (t) t.remove();
+}
+
+function addBoard(type, label, content, cls) {
+  const cb = document.getElementById('cbContent');
+  const empty = document.getElementById('cbEmpty');
+  if (empty) empty.style.display = 'none';
+
+  const div = document.createElement('div');
+  div.className = `cb-item ${cls || type}`;
+
+  let inner = `<div class="cb-item-label">${label}</div>`;
+
+  if (type === 'equation') {
+    inner += `<div class="cb-equation">\\(${content}\\)</div>`;
+  } else if (type === 'steps') {
+    const arr = Array.isArray(content) ? content : [content];
+    inner += `<div class="cb-steps">${arr.map((s,i)=>`<div class="cb-step"><div class="cb-step-n">${i+1}</div><div>${s}</div></div>`).join('')}</div>`;
+  } else if (type === 'concept') {
+    inner += `<div class="cb-concept">${content}</div>`;
+  } else {
+    inner += `<div class="cb-definition">${content}</div>`;
+  }
+
+  div.innerHTML = inner;
+  cb.appendChild(div);
+  cb.scrollTop = cb.scrollHeight;
+
+  if (window.MathJax) MathJax.typesetPromise([div]).catch(()=>{});
+}
+
+function eraseBoard() {
+  document.getElementById('cbContent').innerHTML = `
+    <div class="cb-empty" id="cbEmpty">
+      <div class="cb-empty-icon">✍️</div>
+      <p>Mr. O will write<br>equations and concepts<br>here as you work through them</p>
+    </div>
+  `;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── API ──
+async function callMrO(userMsg) {
+  history.push({ role: 'user', content: userMsg });
+
+  const mastStr = Object.entries(mastery)
+    .filter(([,v])=>v>0)
+    .map(([k,v])=>`${TOPICS[k]||k}: ${v}%`)
+    .join(', ') || 'Just starting';
+
+  const sys = SYS
+    .replace('TOPIC', TOPICS[topic])
+    .replace('MODE', mode)
+    + `\nVidisha's mastery so far: ${mastStr}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: sys,
+        messages: history
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '{}';
+    history.push({ role: 'assistant', content: raw });
+
+    let parsed;
+    try {
+      parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    } catch {
+      parsed = { message: raw, speak: raw, whiteboard: [], mastery_delta: 0, expects_response: true };
+    }
+
+    if (parsed.mastery_delta) {
+      mastery[topic] = Math.min(100, Math.max(0, (mastery[topic]||0) + parsed.mastery_delta));
+      const bar = document.getElementById(`bar-${topic}`);
+      const pill = document.getElementById(`pill-${topic}`);
+      if (bar) bar.style.width = mastery[topic] + '%';
+      if (pill) pill.textContent = mastery[topic] + '%';
+    }
+
+    return parsed;
+
+  } catch(e) {
+    return { message: "Hmm, I lost my train of thought there, Vidisha. Can you try again?", speak: "Let me try that again.", whiteboard: [], mastery_delta: 0, expects_response: true };
+  }
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  if (!sessionStarted) startSession();
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('sendBtn').disabled = true;
+  stopSpeaking();
+
+  addVidisha(msg);
+  showThinking();
+
+  const result = await callMrO(msg);
+  hideThinking();
+
+  let formatted = (result.message || 'Interesting... let me think about how to guide you.').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');
+  addMrO(formatted);
+
+  if (result.whiteboard && Array.isArray(result.whiteboard)) {
+    result.whiteboard.forEach(item => {
+      if (item?.type) addBoard(item.type, item.label || item.type.toUpperCase(), item.content, item.type);
+    });
+  }
+
+  if (result.speak) speakOut(result.speak);
+
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('chatInput').focus();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ── VOICE — OpenAI TTS ──
+async function speakOut(text) {
+  stopSpeaking();
+  const clean = text.replace(/<[^>]+>/g,'').replace(/[★✦∫∂]/g,'').trim();
+  if (!clean) return;
+  if (!openaiKey) { promptForKey(clean); return; }
+  document.getElementById('speakingBar').classList.add('visible');
+  isSpeaking = true;
+  try {
+    const res = await fetch('https://api.openai.com/v1/audio/speech', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+openaiKey},
+      body:JSON.stringify({model:'tts-1',input:clean,voice:'onyx',speed:0.95})
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({error:{message:res.status}}));
+      if (res.status===401) { openaiKey=''; sessionStorage.removeItem('oai_key'); showMicError('OpenAI key invalid — click 🔑 Voice to re-enter.'); }
+      else showMicError('Voice error: '+(err.error?.message||res.status));
+      isSpeaking=false; document.getElementById('speakingBar').classList.remove('visible'); return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    currentAudio.onended = ()=>{ isSpeaking=false; document.getElementById('speakingBar').classList.remove('visible'); URL.revokeObjectURL(url); };
+    currentAudio.onerror = ()=>{ isSpeaking=false; document.getElementById('speakingBar').classList.remove('visible'); };
+    await currentAudio.play();
+  } catch(e) {
+    isSpeaking=false; document.getElementById('speakingBar').classList.remove('visible');
+  }
+}
+
+function stopSpeaking() {
+  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  isSpeaking=false;
+  document.getElementById('speakingBar').classList.remove('visible');
+}
+
+function promptForKey(pendingText) {
+  if (document.getElementById('keyModal')) return;
+  const safe = encodeURIComponent(pendingText||'');
+  const modal = document.createElement('div');
+  modal.id='keyModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(26,26,46,.85);backdrop-filter:blur(8px);z-index:999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML=`
+    <div style="background:#fffdf9;border-radius:16px;padding:32px;max-width:420px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,.2);">
+      <div style="font-size:1.8rem;margin-bottom:10px;">🎙️</div>
+      <div style="font-family:'Fraunces',serif;font-size:1.25rem;font-weight:700;margin-bottom:8px;color:#2c2c3a;">One-time voice setup</div>
+      <p style="font-size:.84rem;color:#6b7280;line-height:1.7;margin-bottom:6px;">
+        Mr. O's human voice uses OpenAI TTS — warm, natural, not robotic.
+        You need a free OpenAI API key.
+      </p>
+      <p style="font-size:.8rem;color:#9ca3af;margin-bottom:16px;">
+        👉 Get one free at <strong style="color:#c4722a">platform.openai.com/api-keys</strong><br>
+        (Takes 2 min · costs ~$0.01/session)
+      </p>
+      <input id="keyInput" type="password" placeholder="sk-..."
+        style="width:100%;padding:10px 14px;border:1.5px solid #e5e0d8;border-radius:8px;font-size:.88rem;font-family:'Outfit',sans-serif;outline:none;margin-bottom:12px;"
+        onfocus="this.style.borderColor='#c4722a'" onblur="this.style.borderColor='#e5e0d8'">
+      <div style="display:flex;gap:8px;">
+        <button onclick="saveKey('${safe}')"
+          style="flex:1;padding:11px;border-radius:8px;border:none;background:linear-gradient(135deg,#c4722a,#e8a45a);color:white;font-weight:800;font-size:.88rem;cursor:pointer;font-family:'Outfit',sans-serif;">
+          Activate Human Voice 🎙️</button>
+        <button onclick="document.getElementById('keyModal').remove()"
+          style="padding:11px 14px;border-radius:8px;border:1.5px solid #e5e0d8;background:transparent;color:#6b7280;font-size:.82rem;cursor:pointer;font-family:'Outfit',sans-serif;">
+          Skip</button>
+      </div>
+      <p style="font-size:.7rem;color:#d1d5db;margin-top:10px;text-align:center;">Key stays in session memory only — never saved to a server</p>
+    </div>`;
+  document.body.appendChild(modal);
+  setTimeout(()=>document.getElementById('keyInput')?.focus(),100);
+}
+
+function saveKey(pendingEncoded) {
+  const val = document.getElementById('keyInput')?.value?.trim();
+  if (!val || !val.startsWith('sk-')) {
+    const inp=document.getElementById('keyInput');
+    if(inp){inp.style.borderColor='#f87171';inp.placeholder='Must start with sk-...';}
+    return;
+  }
+  openaiKey=val;
+  sessionStorage.setItem('oai_key',val);
+  document.getElementById('keyModal')?.remove();
+  if (pendingEncoded) speakOut(decodeURIComponent(pendingEncoded));
+}
+
+// ── MIC — robust version ──
+function toggleMic() {
+  stopSpeaking();
+  if (isListening) { stopListening(); return; }
+
+  // Check browser support
+  const hasSR = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+  if (!hasSR) {
+    showMicError('Voice input requires Chrome or Edge. Please type your answer instead.');
+    return;
+  }
+
+  // Request mic permission explicitly first — fixes the file:// blocking issue
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      // Permission granted — stop the stream immediately (SR will handle its own)
+      stream.getTracks().forEach(t => t.stop());
+      startListening();
+    })
+    .catch(err => {
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        showMicError('Microphone blocked. Click the 🔒 or camera icon in the address bar → allow microphone → refresh the page.');
+      } else if (err.name === 'NotFoundError') {
+        showMicError('No microphone found. Plug one in, or type your answer.');
+      } else {
+        // Some browsers block getUserMedia on file:// — try SR directly anyway
+        startListening();
+      }
+    });
+}
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recog = new SR();
+  recog.continuous = false;
+  recog.interimResults = true;
+  recog.lang = 'en-US';
+
+  recog.onstart = () => {
+    isListening = true;
+    document.getElementById('micBtn').classList.add('listening');
+    document.getElementById('micBtn').textContent = '🔴';
+    document.getElementById('hint').textContent = '🎤 Listening... speak your answer, Vidisha';
+  };
+
+  recog.onresult = e => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    document.getElementById('chatInput').value = transcript;
+    autoResize(document.getElementById('chatInput'));
+  };
+
+  recog.onend = () => {
+    isListening = false;
+    document.getElementById('micBtn').classList.remove('listening');
+    document.getElementById('micBtn').textContent = '🎤';
+    document.getElementById('hint').textContent = 'Press Enter to send · Tap 🎤 to speak';
+    const v = document.getElementById('chatInput').value.trim();
+    if (v) sendMessage();
+  };
+
+  recog.onerror = e => {
+    stopListening();
+    const msgs = {
+      'not-allowed': 'Mic blocked. Click the 🔒 in your address bar, allow microphone, then refresh.',
+      'no-speech':   'No speech detected — try again!',
+      'network':     'Network error with speech recognition. Check your connection.',
+      'audio-capture': 'No microphone found. Plug one in or type your answer.',
+    };
+    if (e.error !== 'no-speech') showMicError(msgs[e.error] || `Mic error: ${e.error}. Try typing instead.`);
+  };
+
+  try {
+    recog.start();
+  } catch(e) {
+    stopListening();
+    showMicError('Could not start microphone. Try refreshing the page in Chrome.');
+  }
+}
+
+function stopListening() {
+  try { if (recog) recog.stop(); } catch(e) {}
+  isListening = false;
+  document.getElementById('micBtn').classList.remove('listening');
+  document.getElementById('micBtn').textContent = '🎤';
+  document.getElementById('hint').textContent = 'Press Enter to send · Tap 🎤 to speak';
+}
+
+function showMicError(msg) {
+  // Show inline — no alert() popup
+  const hint = document.getElementById('hint');
+  hint.style.color = '#c4722a';
+  hint.style.fontWeight = '700';
+  hint.textContent = '⚠️ ' + msg;
+  setTimeout(() => {
+    hint.style.color = '';
+    hint.style.fontWeight = '';
+    hint.textContent = 'Press Enter to send · Tap 🎤 to speak';
+  }, 6000);
+}
+
+// Voice: OpenAI TTS — key entered via 🔑 button
+</script>
+</body>
+</html>
